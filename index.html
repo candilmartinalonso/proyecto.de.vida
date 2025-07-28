@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyecto de Vida 2025</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to right, #eef2f3, #ffffff);
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+    h1, h2 { text-align: center; margin-bottom: 20px; }
+    label { display: block; font-weight: 600; margin-top: 20px; }
+    .ejemplo { font-size: 0.85em; color: #777; margin-bottom: 6px; }
+    textarea {
+      width: 100%; padding: 10px; border-radius: 8px;
+      border: 1px solid #ccc; min-height: 80px;
+    }
+    button {
+      margin: 30px auto; display: block; padding: 12px 24px;
+      background: #3498db; color: white; border: none;
+      border-radius: 8px; font-weight: bold; cursor: pointer;
+    }
+    button:hover { background: #2980b9; }
+    .resultado-bloque {
+      background: #f9f9f9; padding: 15px; border-radius: 10px;
+      margin-top: 20px;
+    }
+    .resultado-bloque strong { display: block; margin-bottom: 5px; }
+    .devolucion {
+      background: #e8f4fd;
+      border-left: 4px solid #3498db;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 6px;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mi Proyecto de Vida</h1>
+    <form id="vidaForm">
+      <label for="quien">¿Quién soy?</label>
+      <div class="ejemplo">Ej: Soy empática, perseverante, disfruto ayudar a los demás.</div>
+      <textarea id="quien"></textarea>
+
+      <label for="personales">Metas personales</label>
+      <div class="ejemplo">Ej: Viajar por el mundo, tener hábitos saludables.</div>
+      <textarea id="personales"></textarea>
+
+      <label for="profesionales">Metas profesionales</label>
+      <div class="ejemplo">Ej: Graduarme en la universidad, trabajar en marketing.</div>
+      <textarea id="profesionales"></textarea>
+
+      <label for="acciones">Acciones concretas</label>
+      <div class="ejemplo">Ej: Estudiar 2 horas por día, ahorrar, capacitarme online.</div>
+      <textarea id="acciones"></textarea>
+
+      <label for="valores">Mis valores</label>
+      <div class="ejemplo">Ej: Honestidad, respeto, compromiso.</div>
+      <textarea id="valores"></textarea>
+
+      <button type="button" onclick="mostrarResultados()">Ver resultados</button>
+    </form>
+
+    <div id="resultados" style="display:none">
+      <h2>Resumen</h2>
+      <div class="resultado-bloque"><strong>¿Quién soy?</strong><span id="r_quien"></span></div>
+      <div class="resultado-bloque"><strong>Metas personales</strong><span id="r_personales"></span><div class="devolucion" id="d_personales"></div></div>
+      <div class="resultado-bloque"><strong>Metas profesionales</strong><span id="r_profesionales"></span><div class="devolucion" id="d_profesionales"></div></div>
+      <div class="resultado-bloque"><strong>Acciones concretas</strong><span id="r_acciones"></span></div>
+      <div class="resultado-bloque"><strong>Valores</strong><span id="r_valores"></span><div class="devolucion" id="d_valores"></div></div>
+    </div>
+  </div>
+
+  <script>
+    function mostrarResultados() {
+      const quien = document.getElementById("quien").value;
+      const personales = document.getElementById("personales").value;
+      const profesionales = document.getElementById("profesionales").value;
+      const acciones = document.getElementById("acciones").value;
+      const valores = document.getElementById("valores").value;
+
+      document.getElementById("r_quien").innerText = quien;
+      document.getElementById("r_personales").innerText = personales;
+      document.getElementById("r_profesionales").innerText = profesionales;
+      document.getElementById("r_acciones").innerText = acciones;
+      document.getElementById("r_valores").innerText = valores;
+
+      document.getElementById("d_personales").innerText = generarDevolucion(personales);
+      document.getElementById("d_profesionales").innerText = generarDevolucion(profesionales);
+      document.getElementById("d_valores").innerText = generarDevolucionValores(valores);
+
+      document.getElementById("resultados").style.display = "block";
+    }
+
+    function generarDevolucion(texto) {
+      texto = texto.toLowerCase();
+      if (texto.includes("viajar")) return "🌍 Ahorrá mensualmente, buscá ofertas anticipadas, usá apps como Skyscanner o Booking, y organizá un fondo de viaje.";
+      if (texto.includes("salud")) return "💪 Creá una rutina de ejercicios, realizá chequeos médicos anuales y cuidá tu salud mental con pausas activas y meditación.";
+      if (texto.includes("graduarme")) return "🎓 Dividí tus materias por nivel de dificultad, armá cronogramas realistas y aprovechá recursos gratuitos como Khan Academy o YouTube.";
+      if (texto.includes("trabajar")) return "🧳 Creá un perfil profesional online, desarrollá habilidades blandas como comunicación y trabajo en equipo, y mantené actualizada tu red de contactos.";
+      if (texto.includes("emprender")) return "🚀 Validá tu idea con encuestas simples, definí tu cliente ideal, aprendé sobre modelo Canvas y animate a lanzar un MVP.";
+      if (texto.includes("leer")) return "📚 Hacete el hábito de leer 10 minutos al día, empezá por temas que te apasionen y usá apps como Goodreads o audiolibros si te cuesta concentrarte.";
+      if (texto.includes("familia")) return "👨‍👩‍👧‍👦 Reservá tiempo de calidad semanal con tu familia, practicá escucha activa y compartí actividades simples como cocinar o pasear juntos.";
+      if (texto.includes("dinero")) return "💰 Registrá tus gastos, definí metas de ahorro claras y usá herramientas como Excel, Wallet o Fintonic para tener control.";
+      return "📌 Convertí tus metas en pasos diarios simples, medibles y constantes. Revisión mensual te ayudará a mantener el rumbo.";
+    }
+
+    function generarDevolucionValores(v) {
+      v = v.toLowerCase();
+      let r = [];
+      if (v.includes("honestidad")) r.push("⚖️ La honestidad fortalece tu credibilidad en cada paso.");
+      if (v.includes("respeto")) r.push("🤝 El respeto mutuo genera vínculos sanos.");
+      if (v.includes("perseverancia")) r.push("🔥 La perseverancia es la base de cualquier logro duradero.");
+      if (v.includes("compromiso")) r.push("🎯 El compromiso te permite sostener tu camino incluso en momentos difíciles.");
+      return r.length ? r.join("\n") : "🌱 Viví tus valores día a día con coherencia.";
+    }
+  </script>
+</body>
+</html>
