@@ -18,9 +18,12 @@
     body {
       font-family: 'Inter', sans-serif;
     }
-    /* Estilo para la animación de aparición */
+    /* Estilo para las animaciones */
     .fade-in {
       animation: fadeIn 0.5s ease-out forwards;
+    }
+    .fade-out {
+      animation: fadeOut 0.5s ease-in forwards;
     }
     @keyframes fadeIn {
       from {
@@ -32,6 +35,16 @@
         transform: translateY(0);
       }
     }
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+    }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -40,7 +53,7 @@
     <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-10">
       
       <!-- Encabezado -->
-      <div class="text-center mb-8">
+      <div id="header" class="text-center mb-8">
         <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Mi Proyecto de Vida</h1>
         <p class="text-gray-500 mt-2">Define tus metas y traza el camino para alcanzarlas.</p>
       </div>
@@ -53,7 +66,7 @@
           <div class="col-span-1">
             <label for="quien" class="block text-sm font-semibold text-gray-700">¿Quién soy?</label>
             <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Soy una persona empática, perseverante y disfruto ayudar a los demás.</p>
-            <textarea id="quien" placeholder="Describite a vos mismo/a" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
+            <textarea id="quien" placeholder="Describite a vos mismo/a" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition h-28"></textarea>
             <p id="error_quien" class="text-red-500 text-xs mt-1 h-4"></p>
           </div>
 
@@ -61,7 +74,7 @@
           <div class="col-span-1">
             <label for="personales" class="block text-sm font-semibold text-gray-700">Metas personales</label>
             <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Viajar por el mundo, aprender a tocar un instrumento, tener hábitos saludables.</p>
-            <textarea id="personales" placeholder="Tus metas en la vida personal" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
+            <textarea id="personales" placeholder="Tus metas en la vida personal" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition h-28"></textarea>
             <p id="error_personales" class="text-red-500 text-xs mt-1 h-4"></p>
           </div>
 
@@ -69,7 +82,7 @@
           <div class="col-span-1">
             <label for="profesionales" class="block text-sm font-semibold text-gray-700">Metas profesionales</label>
             <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Graduarme en la universidad, conseguir un trabajo en marketing, emprender.</p>
-            <textarea id="profesionales" placeholder="Tus metas en el ámbito profesional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
+            <textarea id="profesionales" placeholder="Tus metas en el ámbito profesional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition h-28"></textarea>
             <p id="error_profesionales" class="text-red-500 text-xs mt-1 h-4"></p>
           </div>
 
@@ -77,7 +90,7 @@
           <div class="col-span-1">
             <label for="acciones" class="block text-sm font-semibold text-gray-700">Acciones concretas</label>
             <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Estudiar 2 horas por día, ahorrar un 10% de mi sueldo, hacer cursos online.</p>
-            <textarea id="acciones" placeholder="¿Qué harás para alcanzar tus metas?" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
+            <textarea id="acciones" placeholder="¿Qué harás para alcanzar tus metas?" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition h-28"></textarea>
             <p id="error_acciones" class="text-red-500 text-xs mt-1 h-4"></p>
           </div>
           
@@ -103,12 +116,15 @@
       <div id="resultados" class="mt-12 border-t pt-8 hidden">
         <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8 text-gray-900">Resumen de Tu Proyecto</h2>
         
-        <div class="space-y-6">
-          <div class="resultado-bloque" id="bloque_quien"></div>
-          <div class="resultado-bloque" id="bloque_personales"></div>
-          <div class="resultado-bloque" id="bloque_profesionales"></div>
-          <div class="resultado-bloque" id="bloque_acciones"></div>
-          <div class="resultado-bloque" id="bloque_valores"></div>
+        <div class="space-y-6" id="resultados-content">
+          <!-- El contenido se generará aquí -->
+        </div>
+
+        <!-- Botón para editar -->
+        <div class="mt-10 text-center">
+            <button id="editButton" class="bg-gray-200 text-gray-800 font-bold py-3 px-8 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all duration-300">
+              Editar Mi Proyecto
+            </button>
         </div>
       </div>
 
@@ -119,10 +135,12 @@
     document.addEventListener("DOMContentLoaded", () => {
       // --- ELEMENTOS DEL DOM ---
       const form = document.getElementById("vidaForm");
+      const header = document.getElementById("header");
       const resultadosContainer = document.getElementById("resultados");
+      const resultadosContent = document.getElementById("resultados-content");
+      const editButton = document.getElementById("editButton");
       const fields = ["quien", "personales", "profesionales", "acciones", "valores"];
       
-      // Objeto para almacenar referencias a los elementos del DOM para no buscarlos repetidamente
       const elements = {};
       fields.forEach(id => {
         elements[id] = document.getElementById(id);
@@ -130,7 +148,6 @@
       });
 
       // --- MAPAS DE DEVOLUCIONES ---
-      // Usar mapas hace que el código sea más limpio y fácil de extender
       const devolucionesMetas = {
         "viajar": "🌍 Para viajar, podés crear un fondo de ahorro, buscar ofertas con anticipación y usar apps de planificación.",
         "salud": "💪 Para cuidar tu salud, establecé una rutina de ejercicios, hacé chequeos médicos y priorizá tu bienestar mental.",
@@ -150,26 +167,52 @@
         "compromiso": "🎯 El compromiso con tus metas te mantendrá enfocado, incluso en los momentos más difíciles del camino.",
         "empatía": "❤️ La empatía te permite conectar mejor con los demás, entender sus necesidades y construir vínculos más fuertes.",
       };
+      
+      const devolucionesAcciones = {
+        "estudiar": "🗓️ Para estudiar mejor, usá técnicas como Pomodoro (25 min de foco y 5 de descanso) y creá un espacio de estudio sin distracciones.",
+        "ahorrar": "📊 Para que tu ahorro sea efectivo, definí un porcentaje fijo de tus ingresos (ej. 10%) y automatizá la transferencia a otra cuenta apenas cobres.",
+        "capacitarme": "💡 Para capacitarte, establecé un horario fijo semanal para tus cursos y aplicá lo que aprendés en pequeños proyectos prácticos para fijar el conocimiento.",
+        "curso": "💡 Para capacitarte, establecé un horario fijo semanal para tus cursos y aplicá lo que aprendés en pequeños proyectos prácticos para fijar el conocimiento.",
+        "ejercicio": "🏃‍♂️ Para mantener la constancia con el ejercicio, empezá con metas realistas (ej. 2-3 veces por semana) y elegí una actividad que realmente disfrutes.",
+        "entrenar": "🏃‍♂️ Para mantener la constancia con el ejercicio, empezá con metas realistas (ej. 2-3 veces por semana) y elegí una actividad que realmente disfrutes.",
+        "organizarme": "✅ Para organizarte mejor, usá una agenda o app de tareas (Todoist, Trello). Definí 3 prioridades cada día para no sentirte abrumado/a.",
+        "planificar": "✅ Para organizarte mejor, usá una agenda o app de tareas (Todoist, Trello). Definí 3 prioridades cada día para no sentirte abrumado/a.",
+      };
+
 
       // --- LÓGICA PRINCIPAL ---
-
-      // Cargar datos guardados al iniciar la página
       loadFromStorage();
 
-      // Event listener para el envío del formulario
       form.addEventListener("submit", (e) => {
-        e.preventDefault(); // Evita que la página se recargue
+        e.preventDefault();
         if (validateForm()) {
           saveToStorage();
           renderResults();
+          showResults();
         }
+      });
+      
+      editButton.addEventListener("click", () => {
+        showForm();
       });
 
       // --- FUNCIONES AUXILIARES ---
 
-      /**
-       * Carga los datos desde localStorage en los textareas.
-       */
+      function showForm() {
+        resultadosContainer.classList.add('hidden');
+        form.classList.remove('hidden');
+        header.classList.remove('hidden');
+        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      
+      function showResults() {
+        form.classList.add('hidden');
+        header.classList.add('hidden');
+        resultadosContainer.classList.remove('hidden');
+        resultadosContainer.classList.add('fade-in');
+        resultadosContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
       function loadFromStorage() {
         fields.forEach(id => {
           const savedValue = localStorage.getItem(`vida_${id}`);
@@ -179,19 +222,12 @@
         });
       }
 
-      /**
-       * Guarda los datos de los textareas en localStorage.
-       */
       function saveToStorage() {
         fields.forEach(id => {
           localStorage.setItem(`vida_${id}`, elements[id].value.trim());
         });
       }
 
-      /**
-       * Valida que ningún campo del formulario esté vacío.
-       * @returns {boolean} - True si todos los campos son válidos, false si no.
-       */
       function validateForm() {
         let isValid = true;
         fields.forEach(id => {
@@ -207,17 +243,9 @@
         return isValid;
       }
 
-      /**
-       * Muestra los resultados en la sección correspondiente.
-       */
       function renderResults() {
-        // Limpia los resultados anteriores antes de renderizar los nuevos
-        fields.forEach(id => {
-            const bloque = document.getElementById(`bloque_${id}`);
-            if (bloque) bloque.innerHTML = '';
-        });
+        resultadosContent.innerHTML = ''; // Limpia resultados anteriores
 
-        // Mapeo de títulos para los bloques de resultados
         const titles = {
             quien: '¿Quién soy?',
             personales: 'Metas Personales',
@@ -226,62 +254,49 @@
             valores: 'Mis Valores'
         };
 
-        // Renderiza cada bloque
         fields.forEach(id => {
             const value = elements[id].value.trim();
             const title = titles[id];
-            const container = document.getElementById(`bloque_${id}`);
             
             let feedbackHTML = '';
             if (id === 'personales' || id === 'profesionales') {
                 feedbackHTML = generateFeedback(value, devolucionesMetas, "📌 Convertí tus metas en pasos diarios, simples y medibles. ¡La constancia es clave!");
             } else if (id === 'valores') {
                 feedbackHTML = generateFeedback(value, devolucionesValores, "🌱 Viví tus valores con coherencia en tu día a día para construir la vida que querés.");
+            } else if (id === 'acciones') {
+                feedbackHTML = generateFeedback(value, devolucionesAcciones, "🚀 Para que tus acciones sean poderosas, asegurate de que sean Específicas, Medibles, Alcanzables, Relevantes y con un Tiempo definido (SMART).");
             }
 
-            container.innerHTML = `
+            const bloqueHTML = `
               <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
                 <strong class="block text-base font-semibold text-blue-700">${title}</strong>
                 <p class="text-gray-700 mt-2 whitespace-pre-line">${value}</p>
                 ${feedbackHTML}
               </div>
             `;
+            resultadosContent.innerHTML += bloqueHTML;
         });
-        
-        // Muestra el contenedor de resultados con una animación
-        resultadosContainer.classList.remove('hidden');
-        resultadosContainer.classList.add('fade-in');
-        
-        // Desplaza la vista hacia los resultados para que el usuario los vea
-        resultadosContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
-      /**
-       * Genera una devolución basada en palabras clave encontradas en el texto.
-       * @param {string} text - El texto del usuario.
-       * @param {object} feedbackMap - El mapa de palabras clave y devoluciones.
-       * @param {string} defaultMessage - El mensaje a mostrar si no se encuentran coincidencias.
-       * @returns {string} - El HTML de la devolución.
-       */
       function generateFeedback(text, feedbackMap, defaultMessage) {
         const lowerText = text.toLowerCase();
-        let foundFeedbacks = [];
+        let foundFeedbacks = new Set(); // Usar un Set para evitar duplicados
 
         for (const key in feedbackMap) {
           if (lowerText.includes(key)) {
-            foundFeedbacks.push(feedbackMap[key]);
+            foundFeedbacks.add(feedbackMap[key]);
           }
         }
 
-        if (foundFeedbacks.length === 0) {
-          foundFeedbacks.push(defaultMessage);
+        if (foundFeedbacks.size === 0) {
+          foundFeedbacks.add(defaultMessage);
         }
 
         return `
-          <div class="mt-3 bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-3 rounded-r-lg">
-            <p class="font-medium text-sm">Sugerencia:</p>
-            <ul class="list-disc list-inside mt-1 text-sm">
-              ${foundFeedbacks.map(f => `<li>${f}</li>`).join('')}
+          <div class="mt-4 bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-3 rounded-r-lg">
+            <p class="font-medium text-sm">💡 Cómo potenciarlo:</p>
+            <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+              ${[...foundFeedbacks].map(f => `<li>${f}</li>`).join('')}
             </ul>
           </div>
         `;
