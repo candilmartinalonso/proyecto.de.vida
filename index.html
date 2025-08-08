@@ -3,134 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Proyecto de Vida 2025</title>
-  <!-- Import the Inter font from Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
-    rel="stylesheet"
-  />
+  <title>Proyecto de Vida 2025 (Mejorado)</title>
+  
+  <!-- Tailwind CSS via CDN for rapid prototyping -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    /*
-      Definimos variables CSS para colores y fondos de manera que sea
-      sencillo modificar la paleta de colores o aplicar temas futuros. El
-      gradiente de fondo y los tonos de botones se reutilizan en varias
-      partes de la aplicación.
-    */
-    :root {
-      --primary-color: #3498db;
-      --primary-hover: #2980b9;
-      --accent-color: #e8f4fd;
-      --background-gradient: linear-gradient(to right, #eef2f3, #ffffff);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    /* Usamos la fuente Inter importada como fuente principal */
     body {
-      font-family: "Inter", sans-serif;
-      background: var(--background-gradient);
-      color: #333;
-      padding: 20px;
+      font-family: 'Inter', sans-serif;
     }
-
-    .container {
-      max-width: 900px;
-      margin: auto;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 30px;
-      overflow: hidden;
-    }
-
-    h1,
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-top: 20px;
-    }
-
-    .ejemplo {
-      font-size: 0.85em;
-      color: #777;
-      margin-bottom: 6px;
-    }
-
-    textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      min-height: 80px;
-      resize: vertical;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    /* Resaltamos el campo activo para mejorar la accesibilidad y
-       proporcionar una pista visual al usuario. */
-    textarea:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 6px rgba(52, 152, 219, 0.3);
-    }
-
-    button {
-      margin: 30px auto;
-      display: block;
-      padding: 12px 24px;
-      background: var(--primary-color);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
-    }
-
-    button:hover {
-      background: var(--primary-hover);
-      transform: translateY(-2px);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
-
-    .resultado-bloque {
-      background: #f9f9f9;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 20px;
-    }
-
-    .resultado-bloque strong {
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .devolucion {
-      background: var(--accent-color);
-      border-left: 4px solid var(--primary-color);
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 6px;
-      white-space: pre-line;
-      font-size: 0.9em;
-    }
-
-    /* Animación de aparición suave utilizada en el contenedor de resultados. */
+    /* Estilo para la animación de aparición */
     .fade-in {
-      animation: fadeIn 0.6s ease-out forwards;
+      animation: fadeIn 0.5s ease-out forwards;
     }
-
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -141,164 +32,261 @@
         transform: translateY(0);
       }
     }
-
-    /* Estilos responsivos para que el formulario se adapte mejor en
-       pantallas pequeñas. */
-    @media (max-width: 600px) {
-      .container {
-        padding: 20px;
-      }
-      button {
-        width: 100%;
-      }
-    }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>Mi Proyecto de Vida</h1>
-    <form id="vidaForm">
-      <label for="quien">¿Quién soy?</label>
-      <div class="ejemplo">
-        Ej: Soy empática, perseverante, disfruto ayudar a los demás.
-      </div>
-      <textarea id="quien" placeholder="Describite a vos mismo/a"></textarea>
+<body class="bg-gray-50 text-gray-800">
 
-      <label for="personales">Metas personales</label>
-      <div class="ejemplo">Ej: Viajar por el mundo, tener hábitos saludables.</div>
-      <textarea id="personales" placeholder="Metas que te gustaría lograr en tu vida personal"></textarea>
+  <div class="container max-w-4xl mx-auto p-4 sm:p-8">
+    <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-10">
+      
+      <!-- Encabezado -->
+      <div class="text-center mb-8">
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Mi Proyecto de Vida</h1>
+        <p class="text-gray-500 mt-2">Define tus metas y traza el camino para alcanzarlas.</p>
+      </div>
 
-      <label for="profesionales">Metas profesionales</label>
-      <div class="ejemplo">Ej: Graduarme en la universidad, trabajar en marketing.</div>
-      <textarea id="profesionales" placeholder="Metas que te gustaría lograr en tu carrera"></textarea>
+      <!-- Formulario -->
+      <form id="vidaForm" novalidate>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+          
+          <!-- Campo: Quién soy -->
+          <div class="col-span-1">
+            <label for="quien" class="block text-sm font-semibold text-gray-700">¿Quién soy?</label>
+            <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Soy una persona empática, perseverante y disfruto ayudar a los demás.</p>
+            <textarea id="quien" placeholder="Describite a vos mismo/a" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
+            <p id="error_quien" class="text-red-500 text-xs mt-1 h-4"></p>
+          </div>
 
-      <label for="acciones">Acciones concretas</label>
-      <div class="ejemplo">
-        Ej: Estudiar 2 horas por día, ahorrar, capacitarme online.
-      </div>
-      <textarea id="acciones" placeholder="¿Qué harás para alcanzar tus metas?"></textarea>
+          <!-- Campo: Metas Personales -->
+          <div class="col-span-1">
+            <label for="personales" class="block text-sm font-semibold text-gray-700">Metas personales</label>
+            <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Viajar por el mundo, aprender a tocar un instrumento, tener hábitos saludables.</p>
+            <textarea id="personales" placeholder="Tus metas en la vida personal" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
+            <p id="error_personales" class="text-red-500 text-xs mt-1 h-4"></p>
+          </div>
 
-      <label for="valores">Mis valores</label>
-      <div class="ejemplo">Ej: Honestidad, respeto, compromiso.</div>
-      <textarea id="valores" placeholder="¿Qué valores guían tus decisiones?"></textarea>
+          <!-- Campo: Metas Profesionales -->
+          <div class="col-span-1">
+            <label for="profesionales" class="block text-sm font-semibold text-gray-700">Metas profesionales</label>
+            <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Graduarme en la universidad, conseguir un trabajo en marketing, emprender.</p>
+            <textarea id="profesionales" placeholder="Tus metas en el ámbito profesional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
+            <p id="error_profesionales" class="text-red-500 text-xs mt-1 h-4"></p>
+          </div>
 
-      <button type="button" onclick="mostrarResultados()">Ver resultados</button>
-    </form>
+          <!-- Campo: Acciones Concretas -->
+          <div class="col-span-1">
+            <label for="acciones" class="block text-sm font-semibold text-gray-700">Acciones concretas</label>
+            <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Estudiar 2 horas por día, ahorrar un 10% de mi sueldo, hacer cursos online.</p>
+            <textarea id="acciones" placeholder="¿Qué harás para alcanzar tus metas?" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
+            <p id="error_acciones" class="text-red-500 text-xs mt-1 h-4"></p>
+          </div>
+          
+          <!-- Campo: Mis Valores -->
+          <div class="md:col-span-2">
+            <label for="valores" class="block text-sm font-semibold text-gray-700">Mis valores</label>
+            <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Honestidad, respeto, compromiso, perseverancia, empatía.</p>
+            <textarea id="valores" placeholder="¿Qué valores guían tus decisiones?" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
+            <p id="error_valores" class="text-red-500 text-xs mt-1 h-4"></p>
+          </div>
 
-    <div id="resultados" style="display: none">
-      <h2>Resumen</h2>
-      <div class="resultado-bloque">
-        <strong>¿Quién soy?</strong>
-        <span id="r_quien"></span>
+        </div>
+
+        <!-- Botón de envío -->
+        <div class="mt-8 text-center">
+          <button type="submit" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 transform hover:scale-105">
+            Crear Mi Proyecto
+          </button>
+        </div>
+      </form>
+
+      <!-- Sección de Resultados (inicialmente oculta) -->
+      <div id="resultados" class="mt-12 border-t pt-8 hidden">
+        <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8 text-gray-900">Resumen de Tu Proyecto</h2>
+        
+        <div class="space-y-6">
+          <div class="resultado-bloque" id="bloque_quien"></div>
+          <div class="resultado-bloque" id="bloque_personales"></div>
+          <div class="resultado-bloque" id="bloque_profesionales"></div>
+          <div class="resultado-bloque" id="bloque_acciones"></div>
+          <div class="resultado-bloque" id="bloque_valores"></div>
+        </div>
       </div>
-      <div class="resultado-bloque">
-        <strong>Metas personales</strong>
-        <span id="r_personales"></span>
-        <div class="devolucion" id="d_personales"></div>
-      </div>
-      <div class="resultado-bloque">
-        <strong>Metas profesionales</strong>
-        <span id="r_profesionales"></span>
-        <div class="devolucion" id="d_profesionales"></div>
-      </div>
-      <div class="resultado-bloque">
-        <strong>Acciones concretas</strong>
-        <span id="r_acciones"></span>
-      </div>
-      <div class="resultado-bloque">
-        <strong>Valores</strong>
-        <span id="r_valores"></span>
-        <div class="devolucion" id="d_valores"></div>
-      </div>
+
     </div>
   </div>
 
   <script>
-    // Al cargar la página, restauramos cualquier información guardada en
-    // localStorage para darle continuidad al usuario en caso de recarga
-    // accidental de la página.
     document.addEventListener("DOMContentLoaded", () => {
-      const campos = ["quien", "personales", "profesionales", "acciones", "valores"];
-      campos.forEach((id) => {
-        const elemento = document.getElementById(id);
-        const guardado = localStorage.getItem(`vida_${id}`);
-        if (guardado) {
-          elemento.value = guardado;
+      // --- ELEMENTOS DEL DOM ---
+      const form = document.getElementById("vidaForm");
+      const resultadosContainer = document.getElementById("resultados");
+      const fields = ["quien", "personales", "profesionales", "acciones", "valores"];
+      
+      // Objeto para almacenar referencias a los elementos del DOM para no buscarlos repetidamente
+      const elements = {};
+      fields.forEach(id => {
+        elements[id] = document.getElementById(id);
+        elements[`error_${id}`] = document.getElementById(`error_${id}`);
+      });
+
+      // --- MAPAS DE DEVOLUCIONES ---
+      // Usar mapas hace que el código sea más limpio y fácil de extender
+      const devolucionesMetas = {
+        "viajar": "🌍 Para viajar, podés crear un fondo de ahorro, buscar ofertas con anticipación y usar apps de planificación.",
+        "salud": "💪 Para cuidar tu salud, establecé una rutina de ejercicios, hacé chequeos médicos y priorizá tu bienestar mental.",
+        "graduarme": "🎓 Para graduarte, dividí las materias, creá un cronograma realista y buscá grupos de estudio para apoyarte.",
+        "trabajar": "🧳 Para encontrar trabajo, creá un buen perfil profesional online (LinkedIn), desarrollá habilidades blandas y ampliá tu red de contactos.",
+        "emprender": "🚀 Para emprender, validá tu idea con encuestas, definí tu cliente ideal y empezá con un Producto Mínimo Viable (MVP).",
+        "leer": "📚 Para leer más, fijate la meta de leer 10 minutos al día sobre temas que te apasionen. ¡Cada página cuenta!",
+        "familia": "👨‍👩‍👧‍👦 Para fortalecer lazos familiares, reservá tiempo de calidad, practicá la escucha activa y compartí actividades.",
+        "dinero": "💰 Para ordenar tus finanzas, registrá tus gastos, definí metas de ahorro claras y usá alguna app de control financiero.",
+        "aprender": "🧠 Para aprender algo nuevo, buscá cursos online (Coursera, edX), tutoriales en YouTube o podcasts sobre el tema.",
+      };
+
+      const devolucionesValores = {
+        "honestidad": "⚖️ La honestidad construye confianza y fortalece tu credibilidad en cada paso que das.",
+        "respeto": "🤝 El respeto mutuo es la base para construir relaciones sanas y duraderas, tanto personales como profesionales.",
+        "perseverancia": "🔥 La perseverancia te ayudará a superar los obstáculos y es el motor para alcanzar cualquier logro a largo plazo.",
+        "compromiso": "🎯 El compromiso con tus metas te mantendrá enfocado, incluso en los momentos más difíciles del camino.",
+        "empatía": "❤️ La empatía te permite conectar mejor con los demás, entender sus necesidades y construir vínculos más fuertes.",
+      };
+
+      // --- LÓGICA PRINCIPAL ---
+
+      // Cargar datos guardados al iniciar la página
+      loadFromStorage();
+
+      // Event listener para el envío del formulario
+      form.addEventListener("submit", (e) => {
+        e.preventDefault(); // Evita que la página se recargue
+        if (validateForm()) {
+          saveToStorage();
+          renderResults();
         }
       });
+
+      // --- FUNCIONES AUXILIARES ---
+
+      /**
+       * Carga los datos desde localStorage en los textareas.
+       */
+      function loadFromStorage() {
+        fields.forEach(id => {
+          const savedValue = localStorage.getItem(`vida_${id}`);
+          if (savedValue) {
+            elements[id].value = savedValue;
+          }
+        });
+      }
+
+      /**
+       * Guarda los datos de los textareas en localStorage.
+       */
+      function saveToStorage() {
+        fields.forEach(id => {
+          localStorage.setItem(`vida_${id}`, elements[id].value.trim());
+        });
+      }
+
+      /**
+       * Valida que ningún campo del formulario esté vacío.
+       * @returns {boolean} - True si todos los campos son válidos, false si no.
+       */
+      function validateForm() {
+        let isValid = true;
+        fields.forEach(id => {
+          if (elements[id].value.trim() === "") {
+            elements[`error_${id}`].textContent = "Este campo no puede estar vacío.";
+            elements[id].classList.add('border-red-500');
+            isValid = false;
+          } else {
+            elements[`error_${id}`].textContent = "";
+            elements[id].classList.remove('border-red-500');
+          }
+        });
+        return isValid;
+      }
+
+      /**
+       * Muestra los resultados en la sección correspondiente.
+       */
+      function renderResults() {
+        // Limpia los resultados anteriores antes de renderizar los nuevos
+        fields.forEach(id => {
+            const bloque = document.getElementById(`bloque_${id}`);
+            if (bloque) bloque.innerHTML = '';
+        });
+
+        // Mapeo de títulos para los bloques de resultados
+        const titles = {
+            quien: '¿Quién soy?',
+            personales: 'Metas Personales',
+            profesionales: 'Metas Profesionales',
+            acciones: 'Acciones Concretas',
+            valores: 'Mis Valores'
+        };
+
+        // Renderiza cada bloque
+        fields.forEach(id => {
+            const value = elements[id].value.trim();
+            const title = titles[id];
+            const container = document.getElementById(`bloque_${id}`);
+            
+            let feedbackHTML = '';
+            if (id === 'personales' || id === 'profesionales') {
+                feedbackHTML = generateFeedback(value, devolucionesMetas, "📌 Convertí tus metas en pasos diarios, simples y medibles. ¡La constancia es clave!");
+            } else if (id === 'valores') {
+                feedbackHTML = generateFeedback(value, devolucionesValores, "🌱 Viví tus valores con coherencia en tu día a día para construir la vida que querés.");
+            }
+
+            container.innerHTML = `
+              <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+                <strong class="block text-base font-semibold text-blue-700">${title}</strong>
+                <p class="text-gray-700 mt-2 whitespace-pre-line">${value}</p>
+                ${feedbackHTML}
+              </div>
+            `;
+        });
+        
+        // Muestra el contenedor de resultados con una animación
+        resultadosContainer.classList.remove('hidden');
+        resultadosContainer.classList.add('fade-in');
+        
+        // Desplaza la vista hacia los resultados para que el usuario los vea
+        resultadosContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      /**
+       * Genera una devolución basada en palabras clave encontradas en el texto.
+       * @param {string} text - El texto del usuario.
+       * @param {object} feedbackMap - El mapa de palabras clave y devoluciones.
+       * @param {string} defaultMessage - El mensaje a mostrar si no se encuentran coincidencias.
+       * @returns {string} - El HTML de la devolución.
+       */
+      function generateFeedback(text, feedbackMap, defaultMessage) {
+        const lowerText = text.toLowerCase();
+        let foundFeedbacks = [];
+
+        for (const key in feedbackMap) {
+          if (lowerText.includes(key)) {
+            foundFeedbacks.push(feedbackMap[key]);
+          }
+        }
+
+        if (foundFeedbacks.length === 0) {
+          foundFeedbacks.push(defaultMessage);
+        }
+
+        return `
+          <div class="mt-3 bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-3 rounded-r-lg">
+            <p class="font-medium text-sm">Sugerencia:</p>
+            <ul class="list-disc list-inside mt-1 text-sm">
+              ${foundFeedbacks.map(f => `<li>${f}</li>`).join('')}
+            </ul>
+          </div>
+        `;
+      }
     });
-
-    function mostrarResultados() {
-      const quien = document.getElementById("quien").value.trim();
-      const personales = document.getElementById("personales").value.trim();
-      const profesionales = document.getElementById("profesionales").value.trim();
-      const acciones = document.getElementById("acciones").value.trim();
-      const valores = document.getElementById("valores").value.trim();
-
-      // Persistimos la información en localStorage para que el usuario no
-      // pierda sus respuestas al refrescar.
-      localStorage.setItem("vida_quien", quien);
-      localStorage.setItem("vida_personales", personales);
-      localStorage.setItem("vida_profesionales", profesionales);
-      localStorage.setItem("vida_acciones", acciones);
-      localStorage.setItem("vida_valores", valores);
-
-      // Actualizamos el resumen
-      document.getElementById("r_quien").innerText = quien;
-      document.getElementById("r_personales").innerText = personales;
-      document.getElementById("r_profesionales").innerText = profesionales;
-      document.getElementById("r_acciones").innerText = acciones;
-      document.getElementById("r_valores").innerText = valores;
-
-      // Generamos devoluciones personalizadas
-      document.getElementById("d_personales").innerText = generarDevolucion(personales);
-      document.getElementById("d_profesionales").innerText = generarDevolucion(profesionales);
-      document.getElementById("d_valores").innerText = generarDevolucionValores(valores);
-
-      // Mostramos el bloque de resultados con animación
-      const resultados = document.getElementById("resultados");
-      resultados.style.display = "block";
-      resultados.classList.remove("fade-in");
-      // Forzamos un reflow para reiniciar la animación si el usuario edita
-      // varias veces
-      void resultados.offsetWidth;
-      resultados.classList.add("fade-in");
-    }
-
-    function generarDevolucion(texto) {
-      texto = texto.toLowerCase();
-      if (texto.includes("viajar"))
-        return "🌍 Ahorrá mensualmente, buscá ofertas anticipadas, usá apps como Skyscanner o Booking, y organizá un fondo de viaje.";
-      if (texto.includes("salud"))
-        return "💪 Creá una rutina de ejercicios, realizá chequeos médicos anuales y cuidá tu salud mental con pausas activas y meditación.";
-      if (texto.includes("graduarme"))
-        return "🎓 Dividí tus materias por nivel de dificultad, armá cronogramas realistas y aprovechá recursos gratuitos como Khan Academy o YouTube.";
-      if (texto.includes("trabajar"))
-        return "🧳 Creá un perfil profesional online, desarrollá habilidades blandas como comunicación y trabajo en equipo, y mantené actualizada tu red de contactos.";
-      if (texto.includes("emprender"))
-        return "🚀 Validá tu idea con encuestas simples, definí tu cliente ideal, aprendé sobre modelo Canvas y animate a lanzar un MVP.";
-      if (texto.includes("leer"))
-        return "📚 Hacete el hábito de leer 10 minutos al día, empezá por temas que te apasionen y usá apps como Goodreads o audiolibros si te cuesta concentrarte.";
-      if (texto.includes("familia"))
-        return "👨‍👩‍👧‍👦 Reservá tiempo de calidad semanal con tu familia, practicá escucha activa y compartí actividades simples como cocinar o pasear juntos.";
-      if (texto.includes("dinero"))
-        return "💰 Registrá tus gastos, definí metas de ahorro claras y usá herramientas como Excel, Wallet o Fintonic para tener control.";
-      return "📌 Convertí tus metas en pasos diarios simples, medibles y constantes. Revisión mensual te ayudará a mantener el rumbo.";
-    }
-
-    function generarDevolucionValores(v) {
-      v = v.toLowerCase();
-      let r = [];
-      if (v.includes("honestidad"))
-        r.push("⚖️ La honestidad fortalece tu credibilidad en cada paso.");
-      if (v.includes("respeto"))
-        r.push("🤝 El respeto mutuo genera vínculos sanos.");
-      if (v.includes("perseverancia"))
-        r.push("🔥 La perseverancia es la base de cualquier logro duradero.");
-      if (v.includes("compromiso"))
-        r.push("🎯 El compromiso te permite sostener tu camino incluso en momentos difíciles.");
-      return r.length ? r.join("\n") : "🌱 Viví tus valores día a día con coherencia.";
-    }
   </script>
 </body>
 </html>
