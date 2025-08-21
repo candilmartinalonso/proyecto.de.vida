@@ -1,305 +1,465 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Proyecto de Vida 2025 (Mejorado)</title>
+  <title>Proyecto de Vida</title>
   
-  <!-- Tailwind CSS via CDN for rapid prototyping -->
+  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- html2pdf.js for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" xintegrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <style>
-    /* Usamos la fuente Inter importada como fuente principal */
     body {
       font-family: 'Inter', sans-serif;
     }
-    /* Estilo para las animaciones */
-    .fade-in {
-      animation: fadeIn 0.5s ease-out forwards;
-    }
-    .fade-out {
-      animation: fadeOut 0.5s ease-in forwards;
-    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    .dark ::-webkit-scrollbar-track { background: #1e293b; }
+    .dark ::-webkit-scrollbar-thumb { background: #475569; }
+    .dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    
+    /* Animations */
+    .fade-in { animation: fadeIn 0.6s ease-out forwards; }
+    .fade-out-and-hide { animation: fadeOut 0.4s ease-in forwards; }
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
     @keyframes fadeOut {
-      from {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      to {
-        opacity: 0;
-        transform: translateY(10px);
-      }
+        from { opacity: 1; }
+        to { opacity: 0; visibility: hidden; }
+    }
+    
+    /* Loader Style */
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #4f46e5;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    .dark .loader {
+        border-color: #374151;
+        border-top-color: #818cf8;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .vision-board-image {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .vision-board-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    #toast {
+        transition: opacity 0.5s, transform 0.5s;
     }
   </style>
+  <script>
+    // Set theme on initial load
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  </script>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300">
 
-  <div class="container max-w-4xl mx-auto p-4 sm:p-8">
-    <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-10">
+  <!-- Loader -->
+  <div id="loader" class="fixed inset-0 flex justify-center items-center bg-slate-100 dark:bg-slate-900 z-50">
+    <div class="loader"></div>
+  </div>
+
+  <!-- Main Container -->
+  <div id="app-container" class="container max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 opacity-0 transition-opacity duration-500">
+    <div class="bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl shadow-2xl shadow-slate-200/50 dark:shadow-black/20 p-6 sm:p-10">
       
-      <!-- Encabezado -->
-      <div id="header" class="text-center mb-8">
-        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900">Mi Proyecto de Vida</h1>
-        <p class="text-gray-500 mt-2">Define tus metas y traza el camino para alcanzarlas.</p>
-      </div>
-
-      <!-- Formulario -->
-      <form id="vidaForm" novalidate>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-          
-          <!-- Campo: Quién soy -->
-          <div class="col-span-1">
-            <label for="quien" class="block text-sm font-semibold text-gray-700">¿Quién soy?</label>
-            <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Soy una persona empática, perseverante y disfruto ayudar a los demás.</p>
-            <textarea id="quien" placeholder="Describite a vos mismo/a" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition h-28"></textarea>
-            <p id="error_quien" class="text-red-500 text-xs mt-1 h-4"></p>
-          </div>
-
-          <!-- Campo: Metas Personales -->
-          <div class="col-span-1">
-            <label for="personales" class="block text-sm font-semibold text-gray-700">Metas personales</label>
-            <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Viajar por el mundo, aprender a tocar un instrumento, tener hábitos saludables.</p>
-            <textarea id="personales" placeholder="Tus metas en la vida personal" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition h-28"></textarea>
-            <p id="error_personales" class="text-red-500 text-xs mt-1 h-4"></p>
-          </div>
-
-          <!-- Campo: Metas Profesionales -->
-          <div class="col-span-1">
-            <label for="profesionales" class="block text-sm font-semibold text-gray-700">Metas profesionales</label>
-            <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Graduarme en la universidad, conseguir un trabajo en marketing, emprender.</p>
-            <textarea id="profesionales" placeholder="Tus metas en el ámbito profesional" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition h-28"></textarea>
-            <p id="error_profesionales" class="text-red-500 text-xs mt-1 h-4"></p>
-          </div>
-
-          <!-- Campo: Acciones Concretas -->
-          <div class="col-span-1">
-            <label for="acciones" class="block text-sm font-semibold text-gray-700">Acciones concretas</label>
-            <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Estudiar 2 horas por día, ahorrar un 10% de mi sueldo, hacer cursos online.</p>
-            <textarea id="acciones" placeholder="¿Qué harás para alcanzar tus metas?" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition h-28"></textarea>
-            <p id="error_acciones" class="text-red-500 text-xs mt-1 h-4"></p>
-          </div>
-          
-          <!-- Campo: Mis Valores -->
-          <div class="md:col-span-2">
-            <label for="valores" class="block text-sm font-semibold text-gray-700">Mis valores</label>
-            <p class="text-xs text-gray-500 mt-1 mb-2">Ej: Honestidad, respeto, compromiso, perseverancia, empatía.</p>
-            <textarea id="valores" placeholder="¿Qué valores guían tus decisiones?" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"></textarea>
-            <p id="error_valores" class="text-red-500 text-xs mt-1 h-4"></p>
-          </div>
-
+      <!-- Header -->
+      <div id="header" class="flex justify-between items-start mb-8">
+        <div class="text-left">
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">Proyecto de Vida</h1>
+          <p id="inspirational-quote" class="text-slate-500 dark:text-slate-400 mt-2 italic">Cargando frase inspiradora...</p>
         </div>
-
-        <!-- Botón de envío -->
-        <div class="mt-8 text-center">
-          <button type="submit" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 transform hover:scale-105">
-            Crear Mi Proyecto
+        <div class="flex items-center flex-shrink-0 ml-4">
+          <span class="text-sm text-slate-500 dark:text-slate-400 mr-3 hidden sm:block">Modo Oscuro</span>
+          <button id="theme-toggle" type="button" class="p-2 rounded-full bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-all duration-300">
+            <svg id="theme-toggle-dark-icon" class="hidden h-5 w-5 text-slate-100" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden h-5 w-5 text-slate-800" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-.707 10.607a1 1 0 011.414 0l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM1 11a1 1 0 100-2H0a1 1 0 100 2h1z"></path></svg>
           </button>
         </div>
+      </div>
+
+      <!-- Welcome Screen -->
+      <div id="welcomeScreen" class="hidden text-center p-8">
+        <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Bienvenido/a a tu Proyecto de Vida</h2>
+        <p class="mt-4 text-slate-600 dark:text-slate-400">Esta es una herramienta para ayudarte a reflexionar, definir tus metas y trazar un plan de acción. Tómate tu tiempo para pensar en cada sección.</p>
+        <button id="startButton" class="mt-8 bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-bold py-3 px-8 rounded-lg hover:from-indigo-700 hover:to-blue-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-800 transition-all duration-300 transform hover:scale-105 shadow-lg">Comenzar a Crear</button>
+      </div>
+
+      <!-- Form Section -->
+      <form id="vidaForm" class="hidden" novalidate>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8">
+          
+          <div class="md:col-span-2"><label for="mision" class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>Mi Misión de Vida</label><p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-2">Ej: Mi misión es inspirar a otros a través de la creatividad y el aprendizaje constante.</p><textarea id="mision" placeholder="¿Cuál es tu propósito o tu 'por qué'?" data-maxlength="300" class="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 transition h-28"></textarea><div class="text-right text-xs text-slate-400 h-4" id="counter_mision"></div><p id="error_mision" class="text-red-500 text-xs mt-1 h-4"></p></div>
+          <div class="col-span-1"><label for="quien" class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>¿Quién soy?</label><p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-2">Ej: Soy una persona empática, perseverante y disfruto ayudar a los demás.</p><textarea id="quien" placeholder="Describite a vos mismo/a" data-maxlength="300" class="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 transition h-32"></textarea><div class="text-right text-xs text-slate-400 h-4" id="counter_quien"></div><p id="error_quien" class="text-red-500 text-xs mt-1 h-4"></p></div>
+          <div class="col-span-1"><label for="valores" class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" /></svg>Mis valores</label><p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-2">Ej: Honestidad, respeto, compromiso, perseverancia, empatía.</p><textarea id="valores" placeholder="¿Qué valores guían tus decisiones?" data-maxlength="300" class="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 transition h-32"></textarea><div class="text-right text-xs text-slate-400 h-4" id="counter_valores"></div><p id="error_valores" class="text-red-500 text-xs mt-1 h-4"></p></div>
+          <div class="col-span-1"><label for="fortalezas" class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>Mis Fortalezas</label><p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-2">Ej: Creatividad, resolución de problemas, comunicación.</p><textarea id="fortalezas" placeholder="¿En qué destacas?" data-maxlength="300" class="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 transition h-32"></textarea><div class="text-right text-xs text-slate-400 h-4" id="counter_fortalezas"></div><p id="error_fortalezas" class="text-red-500 text-xs mt-1 h-4"></p></div>
+          <div class="col-span-1"><label for="debilidades" class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>Mis Debilidades</label><p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-2">Ej: Procrastinación, hablar en público.</p><textarea id="debilidades" placeholder="¿Qué áreas querés mejorar?" data-maxlength="300" class="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 transition h-32"></textarea><div class="text-right text-xs text-slate-400 h-4" id="counter_debilidades"></div><p id="error_debilidades" class="text-red-500 text-xs mt-1 h-4"></p></div>
+          <div class="col-span-1"><label for="personales" class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z" /></svg>Metas personales</label><p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-2">Ej: Viajar por el mundo, aprender a tocar un instrumento.</p><textarea id="personales" placeholder="Tus metas en la vida personal" data-maxlength="300" class="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 transition h-32"></textarea><div class="text-right text-xs text-slate-400 h-4" id="counter_personales"></div><p id="error_personales" class="text-red-500 text-xs mt-1 h-4"></p></div>
+          <div class="col-span-1"><label for="profesionales" class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3.5a1 1 0 00.002 1.84L9 9.583V14.5a1 1 0 00.553.894l2 1A1 1 0 0012 16v-2.288l4.45-2.225a1 1 0 00.55-.894V5.42a1 1 0 00-.553-.894l-7-3.5zM9 5.42l-5-2.5 5-2.5 5 2.5-5 2.5z" /><path d="M3 13.5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" /></svg>Metas profesionales</label><p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-2">Ej: Graduarme, conseguir un trabajo en marketing.</p><textarea id="profesionales" placeholder="Tus metas en el ámbito profesional" data-maxlength="300" class="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 transition h-32"></textarea><div class="text-right text-xs text-slate-400 h-4" id="counter_profesionales"></div><p id="error_profesionales" class="text-red-500 text-xs mt-1 h-4"></p></div>
+          <div class="md:col-span-2"><label for="acciones" class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>Acciones concretas</label><p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-2">Ej: Estudiar 2 horas por día, ahorrar un 10% de mi sueldo.</p><textarea id="acciones" placeholder="¿Qué harás para alcanzar tus metas?" data-maxlength="500" class="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 transition h-32"></textarea><div class="text-right text-xs text-slate-400 h-4" id="counter_acciones"></div><p id="error_acciones" class="text-red-500 text-xs mt-1 h-4"></p></div>
+          <div class="md:col-span-2"><label for="visionboard" class="flex items-center text-sm font-semibold text-slate-700 dark:text-slate-300"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>Panel de Visión (Vision Board)</label><p class="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-2">Pegá URLs de imágenes que representen tus sueños (una por línea).</p><textarea id="visionboard" placeholder="https://ejemplo.com/imagen1.jpg&#10;https://ejemplo.com/imagen2.png" data-maxlength="1000" class="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 transition h-32"></textarea><div class="text-right text-xs text-slate-400 h-4" id="counter_visionboard"></div><p id="error_visionboard" class="text-red-500 text-xs mt-1 h-4"></p></div>
+        </div>
+        <div class="mt-8 text-center"><button type="submit" class="bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-bold py-3 px-8 rounded-lg hover:from-indigo-700 hover:to-blue-600 focus:outline-none focus:ring-4 focus:ring-indigo-300 dark:focus:ring-indigo-800 transition-all duration-300 transform hover:scale-105 shadow-lg">Guardar Mi Proyecto</button></div>
       </form>
 
-      <!-- Sección de Resultados (inicialmente oculta) -->
-      <div id="resultados" class="mt-12 border-t pt-8 hidden">
-        <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8 text-gray-900">Resumen de Tu Proyecto</h2>
-        
-        <div class="space-y-6" id="resultados-content">
-          <!-- El contenido se generará aquí -->
+      <!-- Results Section -->
+      <div id="resultados" class="hidden">
+        <div id="printable-content">
+            <div class="flex justify-between items-center mb-4 flex-wrap">
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white mb-2 sm:mb-0">Resumen de Tu Proyecto</h2>
+                <div id="last-updated" class="text-xs text-slate-500 dark:text-slate-400 text-left sm:text-right w-full sm:w-auto"></div>
+            </div>
+            <div class="space-y-6" id="resultados-content"></div>
         </div>
-
-        <!-- Botón para editar -->
-        <div class="mt-10 text-center">
-            <button id="editButton" class="bg-gray-200 text-gray-800 font-bold py-3 px-8 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-300 transition-all duration-300">
-              Editar Mi Proyecto
-            </button>
+        <div class="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <button id="editButton" class="w-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 px-6 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 focus:ring-4 focus:ring-slate-300 transition-all">Editar</button>
+            <button id="downloadPdfButton" class="w-full bg-green-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-green-600 focus:ring-4 focus:ring-green-300 transition-all">Descargar PDF</button>
+            <button id="exportButton" class="w-full bg-blue-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 transition-all">Exportar (JSON)</button>
+            <button id="importButton" class="w-full bg-purple-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-purple-600 focus:ring-4 focus:ring-purple-300 transition-all">Importar (JSON)</button>
+            <input type="file" id="importFile" class="hidden" accept=".json">
+        </div>
+        <div class="mt-4 text-center">
+            <button id="clearButton" class="w-full max-w-xs mx-auto bg-red-500 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-600 focus:ring-4 focus:ring-red-300 transition-all">Borrar Todo</button>
         </div>
       </div>
 
     </div>
   </div>
 
+  <!-- Confirmation Modal -->
+  <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center hidden z-50 p-4">
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-xl p-6 w-full max-w-sm text-center fade-in">
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white">¿Estás seguro?</h3>
+      <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">Esta acción borrará permanentemente todo tu proyecto. No se puede deshacer.</p>
+      <div class="mt-6 flex justify-center gap-4">
+        <button id="cancelClear" class="py-2 px-4 bg-slate-200 dark:bg-slate-600 rounded-md hover:bg-slate-300 transition">Cancelar</button>
+        <button id="confirmClear" class="py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 transition">Sí, borrar</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg opacity-0 transform translate-y-10">
+    Proyecto guardado con éxito.
+  </div>
+
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      // --- ELEMENTOS DEL DOM ---
-      const form = document.getElementById("vidaForm");
-      const header = document.getElementById("header");
-      const resultadosContainer = document.getElementById("resultados");
-      const resultadosContent = document.getElementById("resultados-content");
-      const editButton = document.getElementById("editButton");
-      const fields = ["quien", "personales", "profesionales", "acciones", "valores"];
-      
+      const dom = {
+        loader: document.getElementById("loader"),
+        appContainer: document.getElementById("app-container"),
+        welcomeScreen: document.getElementById("welcomeScreen"),
+        startButton: document.getElementById("startButton"),
+        form: document.getElementById("vidaForm"),
+        resultadosContainer: document.getElementById("resultados"),
+        resultadosContent: document.getElementById("resultados-content"),
+        printableContent: document.getElementById("printable-content"),
+        editButton: document.getElementById("editButton"),
+        downloadPdfButton: document.getElementById("downloadPdfButton"),
+        exportButton: document.getElementById("exportButton"),
+        importButton: document.getElementById("importButton"),
+        importFile: document.getElementById("importFile"),
+        clearButton: document.getElementById("clearButton"),
+        confirmationModal: document.getElementById("confirmationModal"),
+        confirmClear: document.getElementById("confirmClear"),
+        cancelClear: document.getElementById("cancelClear"),
+        themeToggle: document.getElementById('theme-toggle'),
+        darkIcon: document.getElementById('theme-toggle-dark-icon'),
+        lightIcon: document.getElementById('theme-toggle-light-icon'),
+        quote: document.getElementById('inspirational-quote'),
+        lastUpdated: document.getElementById('last-updated'),
+        toast: document.getElementById('toast')
+      };
+
+      const fields = ["mision", "quien", "valores", "fortalezas", "debilidades", "personales", "profesionales", "acciones", "visionboard"];
       const elements = {};
       fields.forEach(id => {
         elements[id] = document.getElementById(id);
         elements[`error_${id}`] = document.getElementById(`error_${id}`);
+        elements[`counter_${id}`] = document.getElementById(`counter_${id}`);
       });
-
-      // --- MAPAS DE DEVOLUCIONES ---
-      const devolucionesMetas = {
-        "viajar": "🌍 Para viajar, podés crear un fondo de ahorro, buscar ofertas con anticipación y usar apps de planificación.",
-        "salud": "💪 Para cuidar tu salud, establecé una rutina de ejercicios, hacé chequeos médicos y priorizá tu bienestar mental.",
-        "graduarme": "🎓 Para graduarte, dividí las materias, creá un cronograma realista y buscá grupos de estudio para apoyarte.",
-        "trabajar": "🧳 Para encontrar trabajo, creá un buen perfil profesional online (LinkedIn), desarrollá habilidades blandas y ampliá tu red de contactos.",
-        "emprender": "🚀 Para emprender, validá tu idea con encuestas, definí tu cliente ideal y empezá con un Producto Mínimo Viable (MVP).",
-        "leer": "📚 Para leer más, fijate la meta de leer 10 minutos al día sobre temas que te apasionen. ¡Cada página cuenta!",
-        "familia": "👨‍👩‍👧‍👦 Para fortalecer lazos familiares, reservá tiempo de calidad, practicá la escucha activa y compartí actividades.",
-        "dinero": "💰 Para ordenar tus finanzas, registrá tus gastos, definí metas de ahorro claras y usá alguna app de control financiero.",
-        "aprender": "🧠 Para aprender algo nuevo, buscá cursos online (Coursera, edX), tutoriales en YouTube o podcasts sobre el tema.",
-      };
-
-      const devolucionesValores = {
-        "honestidad": "⚖️ La honestidad construye confianza y fortalece tu credibilidad en cada paso que das.",
-        "respeto": "🤝 El respeto mutuo es la base para construir relaciones sanas y duraderas, tanto personales como profesionales.",
-        "perseverancia": "🔥 La perseverancia te ayudará a superar los obstáculos y es el motor para alcanzar cualquier logro a largo plazo.",
-        "compromiso": "🎯 El compromiso con tus metas te mantendrá enfocado, incluso en los momentos más difíciles del camino.",
-        "empatía": "❤️ La empatía te permite conectar mejor con los demás, entender sus necesidades y construir vínculos más fuertes.",
-      };
       
-      const devolucionesAcciones = {
-        "estudiar": "🗓️ Para estudiar mejor, usá técnicas como Pomodoro (25 min de foco y 5 de descanso) y creá un espacio de estudio sin distracciones.",
-        "ahorrar": "📊 Para que tu ahorro sea efectivo, definí un porcentaje fijo de tus ingresos (ej. 10%) y automatizá la transferencia a otra cuenta apenas cobres.",
-        "capacitarme": "💡 Para capacitarte, establecé un horario fijo semanal para tus cursos y aplicá lo que aprendés en pequeños proyectos prácticos para fijar el conocimiento.",
-        "curso": "💡 Para capacitarte, establecé un horario fijo semanal para tus cursos y aplicá lo que aprendés en pequeños proyectos prácticos para fijar el conocimiento.",
-        "ejercicio": "🏃‍♂️ Para mantener la constancia con el ejercicio, empezá con metas realistas (ej. 2-3 veces por semana) y elegí una actividad que realmente disfrutes.",
-        "entrenar": "🏃‍♂️ Para mantener la constancia con el ejercicio, empezá con metas realistas (ej. 2-3 veces por semana) y elegí una actividad que realmente disfrutes.",
-        "organizarme": "✅ Para organizarte mejor, usá una agenda o app de tareas (Todoist, Trello). Definí 3 prioridades cada día para no sentirte abrumado/a.",
-        "planificar": "✅ Para organizarte mejor, usá una agenda o app de tareas (Todoist, Trello). Definí 3 prioridades cada día para no sentirte abrumado/a.",
-      };
+      const inspirationalQuotes = [
+        { content: "El mejor momento para plantar un árbol fue hace 20 años. El segundo mejor momento es ahora.", author: "Proverbio Chino" },
+        { content: "El único modo de hacer un gran trabajo es amar lo que haces.", author: "Steve Jobs" },
+        { content: "El éxito es la suma de pequeños esfuerzos repetidos día tras día.", author: "Robert Collier" },
+        { content: "Tu futuro es creado por lo que haces hoy, no mañana.", author: "Robert Kiyosaki" },
+        { content: "Cree que puedes y ya estás a medio camino.", author: "Theodore Roosevelt" },
+        { content: "La vida es 10% lo que nos pasa y 90% cómo reaccionamos a ello.", author: "Charles R. Swindoll" },
+        { content: "No esperes. El momento nunca será el adecuado.", author: "Napoleon Hill" },
+        { content: "La disciplina es el puente entre las metas y los logros.", author: "Jim Rohn" },
+        { content: "El futuro pertenece a quienes creen en la belleza de sus sueños.", author: "Eleanor Roosevelt" }
+      ];
 
+      function initialize() {
+        displayRandomQuote();
+        setupEventListeners();
+        updateThemeIcons();
+        loadFromStorage();
+        setupCharacterCounters();
+        setTimeout(() => {
+            dom.loader.classList.add('fade-out-and-hide');
+            dom.appContainer.style.opacity = '1';
+            dom.appContainer.classList.add('fade-in');
+            if (localStorage.getItem('vida_mision')) {
+              renderResults();
+              showView(dom.resultadosContainer);
+            } else {
+              showView(dom.welcomeScreen);
+            }
+        }, 500);
+      }
 
-      // --- LÓGICA PRINCIPAL ---
-      loadFromStorage();
+      initialize();
 
-      form.addEventListener("submit", (e) => {
+      function setupEventListeners() {
+        dom.startButton.addEventListener("click", () => showView(dom.form));
+        dom.form.addEventListener("submit", handleFormSubmit);
+        dom.editButton.addEventListener("click", () => showView(dom.form));
+        dom.themeToggle.addEventListener('click', handleThemeToggle);
+        dom.downloadPdfButton.addEventListener("click", handleDownloadPdf);
+        dom.exportButton.addEventListener("click", handleExport);
+        dom.importButton.addEventListener("click", () => dom.importFile.click());
+        dom.importFile.addEventListener("change", handleImport);
+        dom.clearButton.addEventListener("click", () => dom.confirmationModal.classList.remove('hidden'));
+        dom.cancelClear.addEventListener("click", () => dom.confirmationModal.classList.add('hidden'));
+        dom.confirmClear.addEventListener("click", handleClearData);
+      }
+      
+      function showToast(message, isError = false) {
+        dom.toast.textContent = message;
+        dom.toast.classList.toggle('bg-green-500', !isError);
+        dom.toast.classList.toggle('bg-red-500', isError);
+        dom.toast.classList.remove('opacity-0', 'translate-y-10');
+        dom.toast.classList.add('opacity-100', 'translate-y-0');
+        setTimeout(() => {
+            dom.toast.classList.remove('opacity-100', 'translate-y-0');
+            dom.toast.classList.add('opacity-0', 'translate-y-10');
+        }, 3000);
+      }
+
+      function handleFormSubmit(e) {
         e.preventDefault();
         if (validateForm()) {
           saveToStorage();
           renderResults();
-          showResults();
+          showView(dom.resultadosContainer);
+          showToast("Proyecto guardado con éxito.");
         }
-      });
-      
-      editButton.addEventListener("click", () => {
-        showForm();
-      });
+      }
 
-      // --- FUNCIONES AUXILIARES ---
+      function handleThemeToggle() {
+        document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        updateThemeIcons();
+      }
 
-      function showForm() {
-        resultadosContainer.classList.add('hidden');
-        form.classList.remove('hidden');
-        header.classList.remove('hidden');
-        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      function handleDownloadPdf() {
+        if (typeof html2pdf === 'undefined') {
+            showToast("Error: La librería PDF no se pudo cargar.", true);
+            console.error("html2pdf is not defined. Check the library script tag.");
+            return;
+        }
+        const opt = { margin: 0.5, filename: 'MiProyectoDeVida.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
+        const isDark = document.documentElement.classList.contains('dark');
+        if (isDark) document.documentElement.classList.remove('dark');
+        html2pdf().from(dom.printableContent).set(opt).save().then(() => {
+            if (isDark) document.documentElement.classList.add('dark');
+        });
+      }
+
+      function handleExport() {
+        const data = {};
+        fields.forEach(id => { data[id] = localStorage.getItem(`vida_${id}`); });
+        data.lastUpdated = localStorage.getItem('vida_lastUpdated');
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'proyecto_de_vida_backup.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast("Copia de seguridad exportada.");
+      }
+
+      function handleImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                let imported = false;
+                fields.forEach(id => {
+                    if (data[id] !== undefined && data[id] !== null) {
+                        localStorage.setItem(`vida_${id}`, data[id]);
+                        imported = true;
+                    }
+                });
+                if(data.lastUpdated) localStorage.setItem('vida_lastUpdated', data.lastUpdated);
+                
+                if (imported) {
+                    loadFromStorage();
+                    renderResults();
+                    showView(dom.resultadosContainer);
+                    showToast("Proyecto importado con éxito.");
+                } else {
+                    showToast("El archivo no contiene datos válidos.", true);
+                }
+            } catch (error) {
+                console.error("Error importing file:", error);
+                showToast("Error: El archivo no es válido.", true);
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+      }
+
+      function handleClearData() {
+        fields.forEach(id => localStorage.removeItem(`vida_${id}`));
+        localStorage.removeItem('vida_lastUpdated');
+        dom.confirmationModal.classList.add('hidden');
+        window.location.reload();
+      }
+
+      function showView(viewToShow) {
+          [dom.welcomeScreen, dom.form, dom.resultadosContainer].forEach(view => view.classList.add('hidden'));
+          viewToShow.classList.remove('hidden');
+          viewToShow.classList.add('fade-in');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function updateThemeIcons() {
+        const isDark = document.documentElement.classList.contains('dark');
+        dom.darkIcon.classList.toggle('hidden', !isDark);
+        dom.lightIcon.classList.toggle('hidden', isDark);
       }
       
-      function showResults() {
-        form.classList.add('hidden');
-        header.classList.add('hidden');
-        resultadosContainer.classList.remove('hidden');
-        resultadosContainer.classList.add('fade-in');
-        resultadosContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      function setupCharacterCounters() {
+        fields.forEach(id => {
+            const textarea = elements[id];
+            if (!textarea) return;
+            const counter = elements[`counter_${id}`];
+            const maxLength = textarea.getAttribute('data-maxlength');
+            const updateCounter = () => {
+                const currentLength = textarea.value.length;
+                counter.textContent = `${currentLength} / ${maxLength}`;
+                counter.classList.toggle('text-red-500', currentLength > maxLength);
+            };
+            textarea.addEventListener('input', updateCounter);
+            updateCounter();
+        });
       }
 
       function loadFromStorage() {
         fields.forEach(id => {
           const savedValue = localStorage.getItem(`vida_${id}`);
-          if (savedValue) {
-            elements[id].value = savedValue;
-          }
+          if (savedValue && elements[id]) elements[id].value = savedValue;
         });
       }
 
       function saveToStorage() {
         fields.forEach(id => {
-          localStorage.setItem(`vida_${id}`, elements[id].value.trim());
+            if(elements[id]) localStorage.setItem(`vida_${id}`, elements[id].value.trim());
         });
+        localStorage.setItem('vida_lastUpdated', new Date().toISOString());
       }
 
       function validateForm() {
         let isValid = true;
         fields.forEach(id => {
-          if (elements[id].value.trim() === "") {
-            elements[`error_${id}`].textContent = "Este campo no puede estar vacío.";
-            elements[id].classList.add('border-red-500');
+          const textarea = elements[id];
+          if (!textarea) return;
+          const errorEl = elements[`error_${id}`];
+          const maxLength = parseInt(textarea.getAttribute('data-maxlength'));
+          if (id === 'visionboard') {
+              errorEl.textContent = "";
+              textarea.classList.remove('border-red-500');
+              return;
+          }
+          if (textarea.value.trim() === "") {
+            errorEl.textContent = "Este campo no puede estar vacío.";
+            textarea.classList.add('border-red-500');
+            isValid = false;
+          } else if (textarea.value.length > maxLength) {
+            errorEl.textContent = `El texto no puede superar los ${maxLength} caracteres.`;
+            textarea.classList.add('border-red-500');
             isValid = false;
           } else {
-            elements[`error_${id}`].textContent = "";
-            elements[id].classList.remove('border-red-500');
+            errorEl.textContent = "";
+            textarea.classList.remove('border-red-500');
           }
         });
         return isValid;
       }
 
       function renderResults() {
-        resultadosContent.innerHTML = ''; // Limpia resultados anteriores
-
-        const titles = {
-            quien: '¿Quién soy?',
-            personales: 'Metas Personales',
-            profesionales: 'Metas Profesionales',
-            acciones: 'Acciones Concretas',
-            valores: 'Mis Valores'
-        };
+        dom.resultadosContent.innerHTML = '';
+        const titles = { mision: 'Mi Misión de Vida', quien: '¿Quién soy?', valores: 'Mis Valores', fortalezas: 'Mis Fortalezas', debilidades: 'Mis Debilidades', personales: 'Metas Personales', profesionales: 'Metas Profesionales', acciones: 'Acciones Concretas', visionboard: 'Panel de Visión' };
+        
+        const lastUpdated = localStorage.getItem('vida_lastUpdated');
+        if(lastUpdated) {
+            dom.lastUpdated.textContent = `Última actualización: ${new Date(lastUpdated).toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short' })}`;
+        } else {
+            dom.lastUpdated.textContent = '';
+        }
 
         fields.forEach(id => {
-            const value = elements[id].value.trim();
+            const value = localStorage.getItem(`vida_${id}`);
+            if (!value) return;
             const title = titles[id];
-            
-            let feedbackHTML = '';
-            if (id === 'personales' || id === 'profesionales') {
-                feedbackHTML = generateFeedback(value, devolucionesMetas, "📌 Convertí tus metas en pasos diarios, simples y medibles. ¡La constancia es clave!");
-            } else if (id === 'valores') {
-                feedbackHTML = generateFeedback(value, devolucionesValores, "🌱 Viví tus valores con coherencia en tu día a día para construir la vida que querés.");
-            } else if (id === 'acciones') {
-                feedbackHTML = generateFeedback(value, devolucionesAcciones, "🚀 Para que tus acciones sean poderosas, asegurate de que sean Específicas, Medibles, Alcanzables, Relevantes y con un Tiempo definido (SMART).");
+            let contentHTML = '';
+            if (id === 'visionboard') {
+                const urls = value.split('\n').filter(url => url.trim().match(/^https?:\/\/.+\..+/));
+                if (urls.length > 0) {
+                    contentHTML = `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mt-2">
+                        ${urls.map(url => `<a href="${url}" target="_blank" rel="noopener noreferrer"><img src="${url}" alt="Imagen del panel de visión" class="aspect-square w-full object-cover rounded-lg vision-board-image" onerror="this.src='https://placehold.co/400x400/e2e8f0/475569?text=Error'"></a>`).join('')}
+                    </div>`;
+                }
+            } else {
+                contentHTML = `<p class="text-slate-700 dark:text-slate-300 mt-2 whitespace-pre-line">${value}</p>`;
             }
-
-            const bloqueHTML = `
-              <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
-                <strong class="block text-base font-semibold text-blue-700">${title}</strong>
-                <p class="text-gray-700 mt-2 whitespace-pre-line">${value}</p>
-                ${feedbackHTML}
-              </div>
-            `;
-            resultadosContent.innerHTML += bloqueHTML;
+            if(contentHTML) {
+                dom.resultadosContent.innerHTML += `<div class="bg-slate-50 dark:bg-slate-800/60 p-5 rounded-lg shadow-md fade-in"><strong class="block text-lg font-semibold text-indigo-600 dark:text-indigo-400">${title}</strong>${contentHTML}</div>`;
+            }
         });
       }
 
-      function generateFeedback(text, feedbackMap, defaultMessage) {
-        const lowerText = text.toLowerCase();
-        let foundFeedbacks = new Set(); // Usar un Set para evitar duplicados
-
-        for (const key in feedbackMap) {
-          if (lowerText.includes(key)) {
-            foundFeedbacks.add(feedbackMap[key]);
+      function displayRandomQuote() {
+          try {
+              const randomIndex = Math.floor(Math.random() * inspirationalQuotes.length);
+              const randomQuote = inspirationalQuotes[randomIndex];
+              dom.quote.textContent = `"${randomQuote.content}" - ${randomQuote.author}`;
+          } catch (error) {
+              console.error("Failed to display quote:", error);
+              dom.quote.textContent = '"El mejor momento para plantar un árbol fue hace 20 años. El segundo mejor momento es ahora."';
           }
-        }
-
-        if (foundFeedbacks.size === 0) {
-          foundFeedbacks.add(defaultMessage);
-        }
-
-        return `
-          <div class="mt-4 bg-blue-50 border-l-4 border-blue-500 text-blue-800 p-3 rounded-r-lg">
-            <p class="font-medium text-sm">💡 Cómo potenciarlo:</p>
-            <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
-              ${[...foundFeedbacks].map(f => `<li>${f}</li>`).join('')}
-            </ul>
-          </div>
-        `;
       }
     });
   </script>
